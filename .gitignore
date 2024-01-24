@@ -1,0 +1,3 @@
+credentials/credentials.json
+!credentials/.gitkeep
+__pycache__/*
