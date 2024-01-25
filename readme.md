@@ -1,7 +1,7 @@
 install python dependencies: 
  pip install google-auth google-api-python-client google-auth-oauthlib google-auth-httplib2
 
-
+ pip install --upgrade openai
 
 How to create credentials.json
 https://developers.google.com/drive/api/quickstart/python

@@ -1,3 +1,6 @@
 credentials/credentials.json
 !credentials/.gitkeep
 __pycache__/*
+.env
+.vscode/launch.json
+credentials/token.json
