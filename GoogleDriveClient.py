@@ -58,92 +58,45 @@ class GoogleDriveClient:
                             print(f"Download {file_name} {int(status.progress() * 100)}%.")
                     print(f'{file_name} downloaded to {file_path}')
 
-    def save_last_downloaded_file_id(self, file_id):
+    def save_last_downloaded_file_timestamp(self, file_timestamp):
         with open('last_downloaded_file.json', 'w') as f:
-            json.dump({'last_file_id': file_id}, f)
+            json.dump({'last_file_timestamp': file_timestamp}, f)
 
-    def get_last_downloaded_file_id(self):
+    def get_last_downloaded_file_timestamp(self):
         try:
             with open('last_downloaded_file.json', 'r') as f:
                 data = json.load(f)
-                return data.get('last_file_id')
+                return data.get('last_file_timestamp')
         except (FileNotFoundError, json.JSONDecodeError):
             # Create the file with an empty JSON object if it doesn't exist or if it's empty
             with open('last_downloaded_file.json', 'w') as f:
-                json.dump({}, f)
-            return None
+                json.dump({'last_file_timestamp': '2024-01-24T19:56:38.143Z'}, f)
+            return '2024-01-24T19:56:38.143Z'
 
-    """ def download_files_one_by_one(self, destination_folder):
+    def list_files_in_folder(self, folder_id):
+        query = f"'{folder_id}' in parents and mimeType != 'application/vnd.google-apps.folder'"
         results = self.service.files().list(
-            pageSize=10, fields="nextPageToken, files(id, name)").execute()
-        items = results.get('files', [])
-
-        if not items:
-            # No more files to download, return None
-            return None
-
-        last_file_id = self.get_last_downloaded_file_id()
-        start_downloading = False if last_file_id else True
-
-        for item in items:
-            if start_downloading:
-                file_id = item['id']
-                file_name = item['name']
-                request = self.service.files().get_media(fileId=file_id)
-                fh = io.BytesIO()
-                downloader = MediaIoBaseDownload(fh, request)
-                done = False
-                while done is False:
-                    status, done = downloader.next_chunk()
-                self.save_last_downloaded_file_id(file_id)
-                file_path = os.path.join(destination_folder, file_name)
-                with open(file_path, 'wb') as f:
-                    f.write(fh.getbuffer())
-                return os.path.abspath(file_path)
-            if item['id'] == last_file_id:
-                start_downloading = True
-
-        # If the last file in the list was the last downloaded one, return None
-        return None """
-
-    def download_files_one_by_one(self,gd_folder_id,destination_folder):
-  
-        query = f"'{gd_folder_id}' in parents and mimeType != 'application/vnd.google-apps.folder'"
-
-        results = self.service.files().list(
-            pageSize=10, 
-            fields="nextPageToken, files(id, name, mimeType)", 
-            q=query).execute()
-        items = results.get('files', [])
-        print(items)
+            q=query,
+            pageSize=100, fields="nextPageToken, files(id, name, createdTime, mimeType)").execute()
         
+        items = results.get('files', [])
         if not items:
             # No more files to download, return None
             return None
+        
+        print(items)
+        return items
+    
+    def download_file_by_id(self, file_id, file_name, file_time, destination_folder):
 
-        last_file_id = self.get_last_downloaded_file_id()
-        start_downloading = False if last_file_id else True
-
-        for item in items:
-            print(item)
-            if item['id'] == last_file_id:
-                start_downloading = True
-                continue
-
-            if start_downloading:
-                file_id = item['id']
-                file_name = item['name']
-                request = self.service.files().get_media(fileId=file_id)
-                fh = io.BytesIO()
-                downloader = MediaIoBaseDownload(fh, request)
-                done = False
-                while done is False:
-                    status, done = downloader.next_chunk()
-                self.save_last_downloaded_file_id(file_id)
-                file_path = os.path.join(destination_folder, file_name)
-                with open(file_path, 'wb') as f:
-                    f.write(fh.getbuffer())
-                return os.path.abspath(file_path)
-
-        # If the last file in the list was the last downloaded one, or no more files to download, return None
-        return None
+        request = self.service.files().get_media(fileId=file_id)
+        fh = io.BytesIO()
+        downloader = MediaIoBaseDownload(fh, request)
+        done = False
+        while done is False:
+            status, done = downloader.next_chunk()
+        self.save_last_downloaded_file_timestamp(file_time)
+        file_path = os.path.join(destination_folder, file_name)
+        with open(file_path, 'wb') as f:
+            f.write(fh.getbuffer())
+        return os.path.abspath(file_path)
