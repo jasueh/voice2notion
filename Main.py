@@ -1,4 +1,5 @@
 
+import time
 from ChatGPTClient import ChatGPTClient
 from GoogleDriveClient import GoogleDriveClient
 from WhisperClient import WhisperClient
@@ -84,6 +85,15 @@ if __name__ == "__main__":
     gd_folder_id = '1hwC1supWB3LszQZDTHw9xZ74lehLXC_v'
     # Local destination folder for downloading files
     destination_folder = 'downloads'
+    
+    # define the interval between script runs (in seconds)
+    interval = 20
+    while True:
+        print('Starting new Cycle')
+        main_app = Main(gd_credentials_file, gd_token_file, gd_folder_id, destination_folder)
+        main_app.download_voice_notes()
 
-    main_app = Main(gd_credentials_file, gd_token_file, gd_folder_id, destination_folder)
-    main_app.download_voice_notes()
+        # wait for the specified interval before running the script again
+        print('Finished this Cycle')
+        time.sleep(interval)
+        print('Starting Cycle again')
