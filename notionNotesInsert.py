@@ -96,7 +96,7 @@ def create_database_item( url, transcript,content):
             "Name": {"title": [{"text": {"content": content['title']}}]},
             "Link / URL": {"url": url},
             "Status":{'id': '%25%255A', 'select': {'color': 'pink', 'id': '4283667e-080f-48d7-8e97-16220f30c2d5','name': '1: New'}, 'type': 'select'},
-            "Type": {'id': 'HrX%40', 'select': {'color': 'orange', 'id': 'l`<Y', 'name': 'WebClip'},  'type': 'select'}
+            "Type": {'id': 'HrX%40', 'select': {'color': 'green', 'id': '29f6918a-1a49-42ea-b7e1-655dafc33ecb', 'name': 'Voice Note'},  'type': 'select'}
         },
         'children': [
             {
