@@ -72,7 +72,7 @@ class Main:
         
         
         url = f"https://drive.google.com/file/d/{file_metadata['id']}/view?usp=drivesdk"
-        notionNotesInsert.create_database_item(json_summary['title'], url, json_summary_str )
+        notionNotesInsert.create_database_item( url, transcript, json_summary )
         
 
 # Example usage
