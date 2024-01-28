@@ -24,25 +24,27 @@ class Main:
         last_downloaded_timestamp = self.gd_client.get_last_downloaded_file_timestamp()
 
 
+        if files_list is None:
+            print("There wasn't any file to retrieve")
+        else:
+            for file_metadata in files_list:
+                
+                print(f"Processing file ID: {file_metadata['id']} - Name:  {file_metadata['name']}")
+                print(f"Created Time: {file_metadata['createdTime']}")
+                print(f"Last Downloaded Time: {last_downloaded_timestamp}")
+                
+                # Parse the timestamps
+                created_time = datetime.fromisoformat(file_metadata['createdTime'].replace("Z", "+00:00"))
+                last_downloaded_time = datetime.fromisoformat(last_downloaded_timestamp.replace("Z", "+00:00"))
 
-        for file_metadata in files_list:
-            
-            print(f"Processing file ID: {file_metadata['id']} - Name:  {file_metadata['name']}")
-            print(f"Created Time: {file_metadata['createdTime']}")
-            print(f"Last Downloaded Time: {last_downloaded_timestamp}")
-            
-            # Parse the timestamps
-            created_time = datetime.fromisoformat(file_metadata['createdTime'].replace("Z", "+00:00"))
-            last_downloaded_time = datetime.fromisoformat(last_downloaded_timestamp.replace("Z", "+00:00"))
-
-            # Compare the timestamps
-            if created_time > last_downloaded_time:
-                print("Created Time is bigger than Last Downloaded Time")
-                self.download_and_process_file(file_metadata)
-            elif created_time < last_downloaded_time:
-                print("Last Downloaded Time is bigger than Created Time, nothing to do here")
-            else:
-                print("Both times are equal, nothing to do here")
+                # Compare the timestamps
+                if created_time > last_downloaded_time:
+                    print("Created Time is bigger than Last Downloaded Time")
+                    self.download_and_process_file(file_metadata)
+                elif created_time < last_downloaded_time:
+                    print("Last Downloaded Time is bigger than Created Time, nothing to do here")
+                else:
+                    print("Both times are equal, nothing to do here")
 
 
     def download_and_process_file(self, file_metadata):
@@ -87,7 +89,7 @@ if __name__ == "__main__":
     destination_folder = 'downloads'
     
     # define the interval between script runs (in seconds)
-    interval = 20
+    interval = 30
     while True:
         print('Starting new Cycle')
         main_app = Main(gd_credentials_file, gd_token_file, gd_folder_id, destination_folder)
